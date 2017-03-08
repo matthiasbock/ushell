@@ -30,7 +30,7 @@ char command_line[MAX_LENGTH];
 ushell_application_list_t* command_list = 0;
 
 
-void ushell_init(ushell_application_list_t* config)
+void ushell_init(const ushell_application_list_t* config)
 {
     command_list = config;
     clear();
@@ -42,17 +42,48 @@ void ushell_help()
     if (command_list == 0)
         return;
 
-    // print help text for all available programs
+    const uint8_t width_column1 = 20;
+    const uint8_t width_column2 = 45;
+
+    // upper table border
     writec('+');
+    for (uint8_t i=0; i<width_column1; i++)
+        writec('-');
+    writec('+');
+    for (uint8_t i=0; i<width_column2; i++)
+        writec('-');
     writec('+');
     crlf();
+
+    // print help text for all available programs
     for (uint8_t i=0; i<command_list->count; i++)
     {
+        // command and help text pointers should never be zero
+        if (command_list->command[i] == 0
+        ||  command_list->help_brief[i] == 0)
+        {
+            continue;
+        }
+
+        write("| ");
         write(command_list->command[i]);
-        write("\t\t| ");
-        writeln(command_list->help_brief[i]);
+        for (uint8_t j=1+strlen(command_list->command[i]); j<width_column1; j++)
+            writec(' ');
+        write("| ");
+        write(command_list->help_brief[i]);
+        for (uint8_t j=1+strlen(command_list->help_brief[i]); j<width_column2; j++)
+            writec(' ');
+        writec('|');
+        crlf();
     }
+
+    // lower table border
     writec('+');
+    for (uint8_t i=0; i<width_column1; i++)
+        writec('-');
+    writec('+');
+    for (uint8_t i=0; i<width_column2; i++)
+        writec('-');
     writec('+');
     crlf();
 }
