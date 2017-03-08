@@ -38,7 +38,23 @@ void ushell_init(ushell_application_list_t* config)
 
 void ushell_help()
 {
-    writeln("Sorry, there's no help text here yet.");
+    // command list undefined
+    if (command_list == 0)
+        return;
+
+    // print help text for all available programs
+    writec('+');
+    writec('+');
+    crlf();
+    for (uint8_t i=0; i<command_list->count; i++)
+    {
+        write(command_list->command[i]);
+        write("\t\t| ");
+        writeln(command_list->help_brief[i]);
+    }
+    writec('+');
+    writec('+');
+    crlf();
 }
 
 /**
@@ -72,13 +88,32 @@ void command_line_evaluator()
             cc++;
         }
 
+    // help
+    if (strcmp(cv[0], "?") == 0
+     || strcmp(cv[0], "h") == 0
+     || strcmp(cv[0], "help") == 0)
+    {
+        ushell_help();
+        return;
+    }
+
+    // clear
+    if (strcmp(cv[0], "clear") == 0)
+    {
+        ushell_clear();
+        return;
+    }
+
     // search command setup for matching command
     for (uint8_t i=0; i<command_list->count; i++)
     {
         if (strcmp(cv[0], command_list->command[i]) == 0)
         {
+            write("Recognized command nr. ");
+            writec(0x30+i);
+            crlf();
             // command found => execute function
-            (*command_list->function[i])(cc, cv);
+            (*(command_list->function[i]))(cc, cv);
             return;
         }
     }

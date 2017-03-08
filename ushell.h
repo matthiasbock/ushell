@@ -29,7 +29,7 @@
 
 
 // application-like functions must have the following structure
-typedef void (*ushell_application_t)(uint8_t, char**);
+typedef void (*ushell_application_t)(uint8_t, char*[]);
 
 #define MAX_APPS 16
 
@@ -42,6 +42,13 @@ typedef struct
     ushell_application_t* function[MAX_APPS];
     char* help_brief[MAX_APPS];
 } ushell_application_list_t;
+
+
+/**
+ * @brief Clear terminal screen
+ */
+#define ushell_clear()  write(ANSI_CLEAR_SCREEN ANSI_MOVE_CURSOR_TO("0","0"));
+
 
 /**
  * @brief Initialize microshell
