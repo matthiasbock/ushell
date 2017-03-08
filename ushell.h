@@ -25,12 +25,25 @@
 #define write(s)    terminal_output_string(s);
 #define crlf()      write("\n\r");
 #define writeln(s)  write(s); crlf();
-#define error(s)    write(ANSI_RESET ANSI_FG_RED "ERROR:" ANSI_RESET " "); writeln(s);
+#define warning(s)  write(ANSI_RESET ANSI_FG_YELLOW "Warning: " ANSI_RESET) writeln(s);
+#define error(s)    write(ANSI_RESET ANSI_FG_RED "Error: " ANSI_RESET); writeln(s);
 
+// if enabled, non-printable characters are accepted as input
+//#define USHELL_ACCEPT_NONPRINTABLE
+
+// if enabled, prints entire command line as hexadecimal characters
+//#define USHELL_DEBUG_INPUT
 
 // application-like functions must have the following structure
 typedef void (*ushell_application_t)(uint8_t, char*[]);
 
+// maximum length of the command line
+#define MAX_LENGTH 64
+
+// maximum number of space-separated substrings in command line
+#define MAX_SUBSTRINGS 6
+
+// maximum number of registered applications (i.e. functions)
 #define MAX_APPS 16
 
 // setup structure to connect commands to functions
@@ -47,7 +60,7 @@ typedef struct
 /**
  * @brief Clear terminal screen
  */
-#define ushell_clear()  write(ANSI_CLEAR_SCREEN ANSI_MOVE_CURSOR_TO(0,0));
+#define ushell_clear()  write(ANSI_CLEAR_SCREEN ANSI_CURSOR_TO(0,0));
 
 
 /**
@@ -88,7 +101,15 @@ void ushell_help();
  */
 inline void ushell_prompt()
 {
-    write(ANSI_RESET ANSI_FG_CYAN "microcontroller" ANSI_FG_MAGENTA ":~$ " ANSI_RESET);
+    write(
+        ANSI_RESET
+        ANSI_FG_CYAN
+        "microcontroller"
+        ANSI_FG_MAGENTA
+        ":~$ "
+        ANSI_RESET
+        ANSI_CLEAR_LINE
+        );
 }
 
 #endif // USHELL_H

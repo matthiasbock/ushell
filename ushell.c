@@ -8,22 +8,19 @@
 
 #include "ushell.h"
 
-// maximum length of the command line
-#define MAX_LENGTH 32
 // length of current command line
 uint8_t length = 0;
 // command line string
 char command_line[MAX_LENGTH];
 
-// maximum number of space-separated substrings in user input
-#define MAX_SUBSTRINGS 3
-
 // character constants
-#define BACKSPACE   8 // 177 ? 8 ?
-#define ENTER      13
+#define BACKSPACE   0x7F
+#define ENTER       0x0D
+#define CTRL_C      0x03
+#define TAB         0x09
 
 // helper macro to empty the command line
-#define clear()  length = 0; command_line[0] = '\0';
+#define clear_command_line()  length = 0; command_line[0] = '\0';
 
 
 // private command setup
@@ -33,7 +30,7 @@ ushell_application_list_t* command_list = 0;
 void ushell_init(const ushell_application_list_t* config)
 {
     command_list = config;
-    clear();
+    clear_command_line();
 }
 
 void ushell_help()
@@ -62,6 +59,7 @@ void ushell_help()
         if (command_list->command[i] == 0
         ||  command_list->help_brief[i] == 0)
         {
+            // skip
             continue;
         }
 
@@ -140,9 +138,6 @@ void command_line_evaluator()
     {
         if (strcmp(cv[0], command_list->command[i]) == 0)
         {
-            write("Recognized command nr. ");
-            writec(0x30+i);
-            crlf();
             // command found => execute function
             (*(command_list->function[i]))(cc, cv);
             return;
@@ -150,13 +145,123 @@ void command_line_evaluator()
     }
 
     // command not recognized
-    error("Unrecognized command.");
+    error("Command not recognized");
     return;
+}
+
+/**
+ * @brief Check, whether the user input matches the beginning of a command (string)
+ */
+inline bool beginning_matches(char* user_input, char* complete_command)
+{
+    // copy complete text to buffer first
+    char trimmed_command[MAX_LENGTH];
+    uint8_t len = strlen(user_input);
+    strncpy(trimmed_command, complete_command, len);
+
+    // terminate after length of user input
+    trimmed_command[len] = '\0';
+
+    // check, whether user input is equal to trimmed command
+    return strcmp(trimmed_command, user_input) == 0;
+}
+
+/**
+ * @brief Tries to guess the rest of the user's incomplete input
+ */
+inline void autocomplete()
+{
+    // whether the user input matched any known commands
+    bool matches = false;
+
+    // check user input against all known commands
+    for (uint8_t i=0; i<command_list->count; i++)
+    {
+        // null pointer? this shouldn't happen
+        if (command_list->command[i] == 0)
+        {
+            // skip
+            continue;
+        }
+
+        // user input matches beginning of command
+        if (beginning_matches(command_line, command_list->command[i]))
+        {
+            // no matches yet
+            if (!matches)
+            {
+                crlf();
+                matches = true;
+            }
+
+            // did you mean this command?
+            writeln(command_list->command[i]);
+        }
+    }
+
+    if (matches)
+    {
+        // redraw command line
+        ushell_prompt();
+        write(command_line);
+    }
 }
 
 void ushell_input_char(uint8_t b)
 {
-    if (is_printable(b))
+    if (b == BACKSPACE)
+    {
+        if (length > 0)
+        {
+            length--;
+            command_line[length] = '\0';
+            write(ANSI_CURSOR_LEFT(1) " " ANSI_CURSOR_LEFT(1));
+        }
+    }
+    else if (b == ENTER)
+    {
+        // line forward
+        crlf();
+
+        #ifdef USHELL_DEBUG_INPUT
+        // print command line as hexadecimal characters
+        char buffer[6] = "12345";
+        for (uint8_t i=0; i<length; i++)
+        {
+            byte2hex(command_line[i], buffer, true);
+            write(buffer);
+            writec(' ');
+        }
+        crlf();
+        #endif
+
+        // evaluate user input
+        command_line_evaluator();
+
+        // clear command line for new input
+        clear_command_line();
+
+        // return to input prompt
+        ushell_prompt();
+    }
+    else if (b == CTRL_C)
+    {
+        // abort user input
+        writeln("^C");
+        clear_command_line();
+
+        // return to input prompt
+        ushell_prompt();
+    }
+    else if (b == TAB)
+    {
+        // try to autocomplete the user's input
+        autocomplete();
+    }
+    else
+    #ifndef USHELL_ACCEPT_NONPRINTABLE
+        if (is_printable(b))
+    #endif
     {
         if (length < MAX_LENGTH-2)
         {
@@ -170,35 +275,13 @@ void ushell_input_char(uint8_t b)
         else
         {
             // terminate command line input
-            writeln("\n\rAborting: Maximum command line length exceed.");
-            clear();
+            crlf();
+            warning("Aborted. Maximum command line length exceed.");
+            clear_command_line();
 
             // return to input prompt
             ushell_prompt();
         }
-    }
-    else if (b == BACKSPACE)
-    {
-        if (length > 0)
-        {
-            length--;
-            command_line[length] = '\0';
-            writec(8);
-        }
-    }
-    else if (b == ENTER)
-    {
-        // line forward
-        crlf();
-
-        // evaluate user input
-        command_line_evaluator();
-
-        // clear command line for new input
-        clear();
-
-        // return to input prompt
-        ushell_prompt();
     }
 }
 
