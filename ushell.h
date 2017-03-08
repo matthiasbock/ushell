@@ -47,7 +47,7 @@ typedef struct
 /**
  * @brief Clear terminal screen
  */
-#define ushell_clear()  write(ANSI_CLEAR_SCREEN ANSI_MOVE_CURSOR_TO("0","0"));
+#define ushell_clear()  write(ANSI_CLEAR_SCREEN ANSI_MOVE_CURSOR_TO(0,0));
 
 
 /**
