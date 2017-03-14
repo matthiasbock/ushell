@@ -6,6 +6,6 @@ CFLAGS += -I ../ucurses/
 
 all: ushell.o
 
-ushell.o: ushell.c ushell.h helper.h ../ucurses/ansi.h
+%.o: %.c
 	$(CC) $(CFLAGS) $< -o $@
 

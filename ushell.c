@@ -30,10 +30,23 @@ ushell_application_list_t* command_list = 0;
 terminal_input_handler_t current_input_handler = 0;
 
 
-void ushell_init(const ushell_application_list_t* config)
+inline void ushell_init(const ushell_application_list_t* config)
 {
     command_list = config;
     clear_command_line();
+}
+
+inline void ushell_prompt()
+{
+    write(
+        ANSI_RESET
+        ANSI_FG_CYAN
+        "microcontroller"
+        ANSI_FG_MAGENTA
+        ":~$ "
+        ANSI_RESET
+        ANSI_CLEAR_LINE
+        );
 }
 
 void ushell_help()

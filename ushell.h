@@ -99,18 +99,7 @@ void ushell_help();
 /**
  * @brief Output user input prompt
  */
-inline void ushell_prompt()
-{
-    write(
-        ANSI_RESET
-        ANSI_FG_CYAN
-        "microcontroller"
-        ANSI_FG_MAGENTA
-        ":~$ "
-        ANSI_RESET
-        ANSI_CLEAR_LINE
-        );
-}
+void ushell_prompt();
 
 
 /*
