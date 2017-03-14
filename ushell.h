@@ -102,6 +102,10 @@ void ushell_help();
 void ushell_prompt();
 
 
+// referenced here, since it appears to be necessary for the function to be usable in ushell.c
+void autocomplete();
+
+
 /*
  * Terminal hooks allow console programs
  * to remain "running" after their initial invocation

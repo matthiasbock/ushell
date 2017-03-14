@@ -41,3 +41,17 @@ inline void byte2hex(uint8_t b, char buffer[], bool prefix)
     // append string terminator
     buffer[2 + prefix*2] = '\0';
 }
+
+inline bool beginning_matches(char* user_input, char* complete_command)
+{
+    // copy complete text to buffer first
+    char trimmed_command[MAX_LENGTH];
+    uint8_t len = strlen(user_input);
+    strncpy(trimmed_command, complete_command, len);
+
+    // terminate after length of user input
+    trimmed_command[len] = '\0';
+
+    // check, whether user input is equal to trimmed command
+    return strcmp(trimmed_command, user_input) == 0;
+}

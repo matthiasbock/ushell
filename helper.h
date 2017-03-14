@@ -4,6 +4,9 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
+
+#include "ushell.h"
 
 /**
  * @brief Find out, if this key is printable or not
@@ -33,5 +36,10 @@ char nibble2hex(uint8_t n);
  * @param prefix: Whether to append 0x to beginning of string
  */
 void byte2hex(uint8_t b, char buffer[], bool prefix);
+
+/**
+ * @brief Check, whether the user input matches the beginning of a command (string)
+ */
+bool beginning_matches(char* user_input, char* complete_command);
 
 #endif // USHELL_HELPER_H
