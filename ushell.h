@@ -50,10 +50,10 @@ typedef void (*ushell_application_t)(uint8_t, char*[]);
 // plus help texts
 typedef struct
 {
-    const uint8_t count;
-    const char* command[MAX_APPS];
-    const ushell_application_t function[MAX_APPS];
-    const char* help_brief[MAX_APPS];
+    uint8_t count;
+    char* command[MAX_APPS];
+    ushell_application_t function[MAX_APPS];
+    char* help_brief[MAX_APPS];
 } ushell_application_list_t;
 
 
@@ -66,7 +66,7 @@ typedef struct
 /**
  * @brief Initialize microshell
  */
-void ushell_init(const ushell_application_list_t*);
+void ushell_init(ushell_application_list_t*);
 
 
 /*
@@ -114,7 +114,7 @@ void autocomplete();
  * after the hook is released by the console program.
  */
 typedef void (*terminal_input_handler_t)(uint8_t);
-void ushell_attach_input_handler(terminal_input_handler_t*);
+void ushell_attach_input_handler(terminal_input_handler_t);
 void ushell_release_input_handler();
 
 #endif // USHELL_H

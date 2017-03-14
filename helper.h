@@ -1,3 +1,9 @@
+/**
+ * Some generic functions used in the microshell
+ *
+ * Author: Matthias Bock <mail@matthiasbock.net>
+ * License: GNU GPLv3
+ */
 
 #ifndef USHELL_HELPER_H
 #define USHELL_HELPER_H

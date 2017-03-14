@@ -30,7 +30,7 @@ ushell_application_list_t* command_list = 0;
 terminal_input_handler_t current_input_handler = 0;
 
 
-inline void ushell_init(const ushell_application_list_t* config)
+inline void ushell_init(ushell_application_list_t* config)
 {
     command_list = config;
     clear_command_line();
@@ -301,7 +301,7 @@ void ushell_input_string(char* s)
 }
 
 
-void ushell_attach_input_handler(terminal_input_handler_t* f)
+void ushell_attach_input_handler(terminal_input_handler_t f)
 {
     current_input_handler = f;
 }
