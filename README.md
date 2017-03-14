@@ -16,6 +16,8 @@ and
 "clear"
 are ignored, as they implement fixed functions.
 <pre>
+#include <ushell.h>
+
 // dummy program
 void hello_world(uint8_t argc, char* argv[])
 {
@@ -69,4 +71,26 @@ It expects you to define the functions
  * void terminal_output_string(char*);
 
 aswell as to invoke
- * terminal_input_char(uint8_t); e.g. in your UART reception interrupt handler
+ * ushell_input_char(uint8_t); e.g. in your UART reception interrupt handler
+
+or
+ * ushell_input_string(char*);
+
+to feed the shell with input.
+(Strings are assumed to be null-terminated.)
+
+## Advanced shell programs
+Usually the shell returns to the input prompt
+after the invocation of a function.
+If you wish to implement (the impression of)
+a constantly running application,
+you can use
+* ushell_attach_input_handler(terminal_input_handler_t*);
+
+within the invoked function to
+attach a user input handler
+of your own.
+All following terminal inputs will
+be forwarded to this function then.
+Once when your application completed, run:
+* ushell_release_input_handler();

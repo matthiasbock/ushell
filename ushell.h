@@ -112,4 +112,16 @@ inline void ushell_prompt()
         );
 }
 
+
+/*
+ * Terminal hooks allow console programs
+ * to remain "running" after their initial invocation
+ * i.e. to receive all of the following terminal inputs.
+ * The shell will only return to the prompt
+ * after the hook is released by the console program.
+ */
+typedef void (*terminal_input_handler_t)(uint8_t);
+void ushell_attach_input_handler(terminal_input_handler_t*);
+void ushell_release_input_handler();
+
 #endif // USHELL_H

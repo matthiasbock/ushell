@@ -26,6 +26,9 @@ char command_line[MAX_LENGTH];
 // private command setup
 ushell_application_list_t* command_list = 0;
 
+// currently running application's input handler
+terminal_input_handler_t current_input_handler = 0;
+
 
 void ushell_init(const ushell_application_list_t* config)
 {
@@ -209,6 +212,13 @@ inline void autocomplete()
 
 void ushell_input_char(uint8_t b)
 {
+    // a running application requested input forwarding
+    if (current_input_handler != 0)
+    {
+        (*current_input_handler)(b);
+        return;
+    }
+
     if (b == BACKSPACE)
     {
         if (length > 0)
@@ -292,4 +302,16 @@ void ushell_input_string(char* s)
     {
         ushell_input_char(s[i++]);
     }
+}
+
+
+void ushell_attach_input_handler(terminal_input_handler_t* f)
+{
+    current_input_handler = f;
+}
+
+void ushell_release_input_handler()
+{
+    current_input_handler = 0;
+    ushell_prompt();
 }
