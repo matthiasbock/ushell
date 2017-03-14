@@ -90,6 +90,11 @@ void ushell_input_char(uint8_t);
  */
 void ushell_input_string(char*);
 
+/*
+ * Turn microshell echo on/off
+ */
+void ushell_echo_on();
+void ushell_echo_off();
 
 /**
  * @brief Output a list of supported commands with help text

@@ -15,9 +15,16 @@ char command_line[MAX_LENGTH];
 
 // character constants
 #define BACKSPACE   0x7F
-#define ENTER       0x0D
+#ifdef NRF51
+    #define ENTER   0x0D
+#else
+    #define ENTER   0x0A
+#endif
 #define CTRL_C      0x03
 #define TAB         0x09
+
+// whether to echo received characters back to terminal
+bool ushell_echo = true;
 
 // helper macro to empty the command line
 #define clear_command_line()  length = 0; command_line[0] = '\0';
@@ -34,6 +41,16 @@ inline void ushell_init(ushell_application_list_t* config)
 {
     command_list = config;
     clear_command_line();
+}
+
+inline void ushell_echo_on()
+{
+    ushell_echo = true;
+}
+
+inline void ushell_echo_off()
+{
+    ushell_echo = false;
 }
 
 inline void ushell_prompt()
@@ -227,7 +244,8 @@ void ushell_input_char(uint8_t b)
     else if (b == ENTER)
     {
         // line forward
-        crlf();
+        if (ushell_echo)
+            crlf();
 
         #ifdef USHELL_DEBUG_INPUT
         // print command line as hexadecimal characters
@@ -275,8 +293,9 @@ void ushell_input_char(uint8_t b)
             command_line[length++] = b;
             command_line[length] = '\0';
 
-            // echo on
-            writec(b);
+            // echo char back to terminal
+            if (ushell_echo)
+                writec(b);
         }
         else
         {
