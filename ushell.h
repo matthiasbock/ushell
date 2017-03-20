@@ -20,6 +20,16 @@
 
 #include "helper.h"
 
+// character constants
+#define BACKSPACE   0x7F
+#ifdef NRF51
+    #define ENTER   0x0D
+#else
+    #define ENTER   0x0A
+#endif
+#define CTRL_C      0x03
+#define TAB         0x09
+
 // output macros
 #define writec(c)   terminal_output_char(c);
 #define write(s)    terminal_output_string(s);
@@ -118,8 +128,8 @@ void autocomplete();
  * The shell will only return to the prompt
  * after the hook is released by the console program.
  */
-typedef void (*terminal_input_handler_t)(uint8_t);
-void ushell_attach_input_handler(terminal_input_handler_t);
-void ushell_release_input_handler();
+typedef void (*keystroke_handler_t)(uint32_t);
+void ushell_attach_keystroke_handler(keystroke_handler_t);
+void ushell_release_keystroke_handler();
 
 #endif // USHELL_H

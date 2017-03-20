@@ -13,16 +13,6 @@ uint8_t length = 0;
 // command line string
 char command_line[MAX_LENGTH];
 
-// character constants
-#define BACKSPACE   0x7F
-#ifdef NRF51
-    #define ENTER   0x0D
-#else
-    #define ENTER   0x0A
-#endif
-#define CTRL_C      0x03
-#define TAB         0x09
-
 // whether to echo received characters back to terminal
 bool ushell_echo = true;
 
@@ -34,7 +24,7 @@ bool ushell_echo = true;
 ushell_application_list_t* command_list = 0;
 
 // currently running application's input handler
-terminal_input_handler_t current_input_handler = 0;
+keystroke_handler_t current_keystroke_handler = 0;
 
 
 inline void ushell_init(ushell_application_list_t* config)
@@ -58,7 +48,7 @@ inline void ushell_prompt()
     write(
         ANSI_RESET
         ANSI_FG_CYAN
-        "microcontroller"
+        "ushell"
         ANSI_FG_MAGENTA
         ":~$ "
         ANSI_RESET
@@ -226,9 +216,9 @@ inline void autocomplete()
 void ushell_input_char(uint8_t b)
 {
     // a running application requested input forwarding
-    if (current_input_handler != 0)
+    if (current_keystroke_handler != 0)
     {
-        (*current_input_handler)(b);
+        (*current_keystroke_handler)(b);
         return;
     }
 
@@ -262,11 +252,17 @@ void ushell_input_char(uint8_t b)
         // evaluate user input
         command_line_evaluator();
 
-        // clear command line for new input
-        clear_command_line();
+        // only return to command prompt,
+        // if application did not request keystroke forwarding
+        // i.e. wishes to remain "running"
+        if (current_keystroke_handler == 0)
+        {
+            // clear command line for new input
+            clear_command_line();
 
-        // return to input prompt
-        ushell_prompt();
+            // return to input prompt
+            ushell_prompt();
+        }
     }
     else if (b == CTRL_C)
     {
@@ -319,14 +315,13 @@ void ushell_input_string(char* s)
     }
 }
 
-
-void ushell_attach_input_handler(terminal_input_handler_t f)
+void ushell_attach_keystroke_handler(keystroke_handler_t h)
 {
-    current_input_handler = f;
+    current_keystroke_handler = h;
 }
 
-void ushell_release_input_handler()
+void ushell_release_keystroke_handler()
 {
-    current_input_handler = 0;
+    current_keystroke_handler = 0;
     ushell_prompt();
 }

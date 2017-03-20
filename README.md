@@ -85,7 +85,7 @@ after the invocation of a function.
 If you wish to implement (the impression of)
 a constantly running application,
 you can use
-* ushell_attach_input_handler(terminal_input_handler_t*);
+* ushell_attach_keystroke_handler(keystroke_handler_t*);
 
 within the invoked function to
 attach a user input handler
@@ -93,4 +93,4 @@ of your own.
 All following terminal inputs will
 be forwarded to this function then.
 Once when your application completed, run:
-* ushell_release_input_handler();
+* ushell_release_keystroke_handler();
