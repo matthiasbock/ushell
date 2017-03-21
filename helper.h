@@ -20,6 +20,16 @@
 bool is_printable(uint8_t b);
 
 /**
+ * Returns the character representing one digit (0-9)
+ */
+char digit2char(uint8_t);
+
+/**
+ * Fill buffer with string representation of integer
+ */
+void int2str(uint32_t w, char buffer[]);
+
+/**
  * @brief Generate a binary representation of a 32-bit integer
  *
  * @param value: Value to represent
@@ -42,6 +52,15 @@ char nibble2hex(uint8_t n);
  * @param prefix: Whether to append 0x to beginning of string
  */
 void byte2hex(uint8_t b, char buffer[], bool prefix);
+
+/**
+ * @brief Generate a hexadecimal representation of 32-bit word
+ *
+ * @param b: Word to represent
+ * @param buffer: Pointer to at least 11 bytes (10 + string terminator)
+ * @param prefix: Whether to append 0x to beginning of string
+ */
+void word2hex(uint32_t w, char buffer[], bool prefix);
 
 /**
  * @brief Check, whether the user input matches the beginning of a command (string)

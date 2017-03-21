@@ -13,6 +13,33 @@ inline bool is_printable(uint8_t b)
     return (b >= 0x20) && (b <= 0x7E);
 }
 
+inline char digit2char(uint8_t b)
+{
+    return '0' + b;
+}
+
+void int2str(uint32_t w, char buffer[])
+{
+    bool write = false;
+    for (uint32_t divisor = 1000000000; divisor >= 1; divisor /= 10)
+    {
+        uint8_t digit = w / divisor;
+        if (digit > 0 || write)
+        {
+            if (digit > 0)
+            {
+                w -= digit*divisor;
+            }
+            *buffer = digit2char(digit);
+            buffer++;
+            write = true;
+        }
+    }
+
+    // string terminator
+    *buffer = 0;
+}
+
 inline void word2binary(uint32_t value, char buffer[])
 {
     // 32 bits
@@ -36,16 +63,39 @@ inline char nibble2hex(uint8_t n)
 
 inline void byte2hex(uint8_t b, char buffer[], bool prefix)
 {
-    // prefix
-    buffer[0] = '0';
-    buffer[1] = 'x';
+    if (prefix)
+    {
+        buffer[0] = '0';
+        buffer[1] = 'x';
+        buffer += 2;
+    }
 
     // hex
-    buffer[prefix*2]   = nibble2hex(b >> 4);
-    buffer[prefix*2+1] = nibble2hex(b & 0x0F);
+    buffer[0] = nibble2hex(b >> 4);
+    buffer[1] = nibble2hex(b & 0x0F);
 
     // append string terminator
-    buffer[2 + prefix*2] = '\0';
+    buffer[3] = '\0';
+}
+
+inline void word2hex(uint32_t w, char buffer[], bool prefix)
+{
+    if (prefix)
+    {
+        buffer[0] = '0';
+        buffer[1] = 'x';
+        buffer += 2;
+    }
+
+    byte2hex(w >> 24, buffer, false);
+    buffer += 2;
+    byte2hex((w >> 16) & 0xFF, buffer, false);
+    buffer += 2;
+    byte2hex((w >> 8) & 0xFF, buffer, false);
+    buffer += 2;
+    byte2hex(w & 0xff, buffer, false);
+    buffer += 2;
+    *buffer = 0;
 }
 
 inline bool beginning_matches(char* user_input, char* complete_command)
