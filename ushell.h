@@ -21,14 +21,28 @@
 #include "helper.h"
 
 // character constants
-#define BACKSPACE   0x7F
+#define KEY_ESC         0x1B
+#define KEY_BACKSPACE   0x7F
 #ifdef NRF51
-    #define ENTER   0x0D
+    #define KEY_ENTER   0x0D
 #else
-    #define ENTER   0x0A
+    #define KEY_ENTER   0x0A
 #endif
-#define CTRL_C      0x03
-#define TAB         0x09
+#define KEY_CTRL_C      0x03
+#define KEY_SPACEBAR    0x20
+#define KEY_TAB         0x09
+
+#define KEY_ESCAPE(b,c)    (KEY_ESC << 24) | (b << 16) | (c << 8)
+#define KEY_UP              KEY_ESCAPE('[','A')
+#define KEY_DOWN            KEY_ESCAPE('[','B')
+#define KEY_RIGHT           KEY_ESCAPE('[','C')
+#define KEY_LEFT            KEY_ESCAPE('[','D')
+#define KEY_PAGEUP          KEY_ESCAPE('[','5')
+#define KEY_PAGEDOWN        KEY_ESCAPE('[','6')
+#define KEY_SHIFT_TAB       KEY_ESCAPE('[','Z')
+#define KEY_POS1            KEY_ESCAPE('[','H')
+#define KEY_END             KEY_ESCAPE('[','F')
+#define KEY_DEL             KEY_ESCAPE('3','~')
 
 // output macros
 #define writec(c)   terminal_output_char(c);

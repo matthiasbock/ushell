@@ -213,8 +213,61 @@ inline void autocomplete()
     }
 }
 
-void ushell_input_char(uint8_t b)
+/**
+ * Checks, whether an escape sequence arrived
+ *
+ * If no, the byte is passed through.
+ * If yes, the byte is catched before being processed in ushell_input_char()
+ * and returned only, when the complete escape sequence has arrived.
+ */
+bool catch_special_char_state_machine(uint8_t regular, uint32_t* special)
 {
+    static bool currently_inside_escape_sequence = false;
+    static uint8_t escape_sequence_byte_nr;
+
+    if (regular == KEY_ESC)
+    {
+        // begin escape sequence
+        currently_inside_escape_sequence = true;
+        escape_sequence_byte_nr = 1;
+
+        // clear sequence buffer
+        *special = KEY_ESC << 24;
+
+        // catch this byte
+        return true;
+    }
+
+    if (currently_inside_escape_sequence)
+    {
+        escape_sequence_byte_nr++;
+
+        // append byte to buffer
+        *special |= regular << ((4-escape_sequence_byte_nr)*8);
+
+        // return sequence, if complete
+        if (escape_sequence_byte_nr >= 3)
+        {
+            currently_inside_escape_sequence = false;
+            return false;
+        }
+        return true;
+    }
+
+    // it was a regular, non-escaped input
+    *special = regular;
+    return false;
+}
+
+/**
+ * Input character to microshell
+ */
+void ushell_input_char(uint8_t c)
+{
+    static uint32_t b;
+    if (catch_special_char_state_machine(c, &b))
+        return;
+
     // a running application requested input forwarding
     if (current_keystroke_handler != 0)
     {
@@ -222,7 +275,7 @@ void ushell_input_char(uint8_t b)
         return;
     }
 
-    if (b == BACKSPACE)
+    if (b == KEY_BACKSPACE)
     {
         if (length > 0)
         {
@@ -231,7 +284,7 @@ void ushell_input_char(uint8_t b)
             write(ANSI_CURSOR_LEFT(1) " " ANSI_CURSOR_LEFT(1));
         }
     }
-    else if (b == ENTER)
+    else if (b == KEY_ENTER)
     {
         // line forward
         if (ushell_echo)
@@ -264,7 +317,7 @@ void ushell_input_char(uint8_t b)
             ushell_prompt();
         }
     }
-    else if (b == CTRL_C)
+    else if (b == KEY_CTRL_C)
     {
         // abort user input
         writeln("^C");
@@ -273,7 +326,7 @@ void ushell_input_char(uint8_t b)
         // return to input prompt
         ushell_prompt();
     }
-    else if (b == TAB)
+    else if (b == KEY_TAB)
     {
         // try to autocomplete the user's input
         autocomplete();
