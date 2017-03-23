@@ -30,6 +30,7 @@ keystroke_handler_t current_keystroke_handler = 0;
 inline void ushell_init(ushell_application_list_t* config)
 {
     command_list = config;
+    command_list->count = sizeof(config->command)/sizeof(char*);
     clear_command_line();
 }
 
@@ -138,6 +139,12 @@ void command_line_evaluator()
             cv[cc] = &command_line[i+1];
             // increment command count
             cc++;
+            // cannot have more than MAX_SUBSTRINGS
+            if (cc >= MAX_SUBSTRINGS)
+            {
+                warning("More than " STR(MAX_SUBSTRINGS) " arguments will be ignored.");
+                break;
+            }
         }
 
     // help
@@ -159,7 +166,9 @@ void command_line_evaluator()
     // search command setup for matching command
     for (uint8_t i=0; i<command_list->count; i++)
     {
-        if (strcmp(cv[0], command_list->command[i]) == 0)
+        if (command_list->command[i] != 0
+         && command_list->function[i] != 0
+         && strcmp(cv[0], command_list->command[i]) == 0)
         {
             // command found => execute function
             (*(command_list->function[i]))(cc, cv);
