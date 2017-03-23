@@ -74,11 +74,16 @@ typedef void (*ushell_application_t)(uint8_t, char*[]);
 // plus help texts
 typedef struct
 {
+    char* name;
+    ushell_application_t function;
+    char* help_brief;
+} ushell_app_t;
+
+typedef struct
+{
     uint8_t count;
-    char* command[MAX_APPS];
-    ushell_application_t function[MAX_APPS];
-    char* help_brief[MAX_APPS];
-} ushell_application_list_t;
+    ushell_app_t apps[];
+} ushell_app_list_t;
 
 
 /**
@@ -90,7 +95,7 @@ typedef struct
 /**
  * @brief Initialize microshell
  */
-void ushell_init(ushell_application_list_t*);
+void ushell_init(ushell_app_list_t*);
 
 
 /*

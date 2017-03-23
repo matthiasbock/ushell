@@ -21,16 +21,16 @@ bool ushell_echo = true;
 
 
 // private command setup
-ushell_application_list_t* command_list = 0;
+ushell_app_list_t* ushell_app_list = 0;
 
 // currently running application's input handler
 keystroke_handler_t current_keystroke_handler = 0;
 
 
-inline void ushell_init(ushell_application_list_t* config)
+inline void ushell_init(ushell_app_list_t* config)
 {
-    command_list = config;
-    command_list->count = sizeof(config->command)/sizeof(char*);
+    ushell_app_list = config;
+//    ushell_app_list->count = sizeof(config->apps)/sizeof(ushell_app_t);
     clear_command_line();
 }
 
@@ -60,7 +60,7 @@ inline void ushell_prompt()
 void ushell_help()
 {
     // command list undefined
-    if (command_list == 0)
+    if (ushell_app_list == 0)
         return;
 
     const uint8_t width_column1 = 20;
@@ -77,23 +77,25 @@ void ushell_help()
     crlf();
 
     // print help text for all available programs
-    for (uint8_t i=0; i<command_list->count; i++)
+    for (uint8_t i=0; i<ushell_app_list->count; i++)
     {
+        ushell_app_t* app = &ushell_app_list->apps[i];
+
         // command and help text pointers should never be zero
-        if (command_list->command[i] == 0
-        ||  command_list->help_brief[i] == 0)
+        if (app->name[i] == 0
+        ||  app->help_brief[i] == 0)
         {
             // skip
             continue;
         }
 
         write("| ");
-        write(command_list->command[i]);
-        for (uint8_t j=1+strlen(command_list->command[i]); j<width_column1; j++)
+        write(app->name);
+        for (uint8_t j=1+strlen(app->name); j<width_column1; j++)
             writec(' ');
         write("| ");
-        write(command_list->help_brief[i]);
-        for (uint8_t j=1+strlen(command_list->help_brief[i]); j<width_column2; j++)
+        write(app->help_brief);
+        for (uint8_t j=1+strlen(app->help_brief); j<width_column2; j++)
             writec(' ');
         writec('|');
         crlf();
@@ -164,14 +166,16 @@ void command_line_evaluator()
     }
 
     // search command setup for matching command
-    for (uint8_t i=0; i<command_list->count; i++)
+    for (uint8_t i=0; i<ushell_app_list->count; i++)
     {
-        if (command_list->command[i] != 0
-         && command_list->function[i] != 0
-         && strcmp(cv[0], command_list->command[i]) == 0)
+        ushell_app_t* app = &ushell_app_list->apps[i];
+
+        if (app->name != 0
+         && app->function != 0
+         && strcmp(cv[0], app->name) == 0)
         {
             // command found => execute function
-            (*(command_list->function[i]))(cc, cv);
+            (*(app->function))(cc, cv);
             return;
         }
     }
@@ -190,17 +194,19 @@ inline void autocomplete()
     bool matches = false;
 
     // check user input against all known commands
-    for (uint8_t i=0; i<command_list->count; i++)
+    for (uint8_t i=0; i<ushell_app_list->count; i++)
     {
+        ushell_app_t* app = &ushell_app_list->apps[i];
+
         // null pointer? this shouldn't happen
-        if (command_list->command[i] == 0)
+        if (app->name == 0)
         {
             // skip
             continue;
         }
 
         // user input matches beginning of command
-        if (beginning_matches(command_line, command_list->command[i]))
+        if (beginning_matches(command_line, app->name))
         {
             // no matches yet
             if (!matches)
@@ -210,7 +216,7 @@ inline void autocomplete()
             }
 
             // did you mean this command?
-            writeln(command_list->command[i]);
+            writeln(app->name);
         }
     }
 

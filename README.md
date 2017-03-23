@@ -9,7 +9,8 @@ It invokes those functions with the argument values,
 the user entered via the console.
 
 ## Configuration
-In your code you must define a list of "programs" to be recognized by the shell.
+In your code you must define a list of "apps",
+i.e. programs to be recognized by the shell.
 The keywords
 "help"
 and
@@ -24,24 +25,26 @@ void hello_world(uint8_t argc, char* argv[])
     writeln("Hello world!");
 }
 
-// example ushell program list
-const ushell_application_list_t supported_commands = {
+// example program list
+const ushell_app_list_t apps =
+{
     count: 3,
-    command: {
-        "help",
-        "clear",
-        "test"
+    apps:
+    {
+        {
+            name: "help",
+            help_brief: "Show this help",
         },
-    function: {
-        0,
-        0,
-        &hello_world
+        {
+            name: "clear",
+            help_brief: "Clear screen",
         },
-    help_brief: {
-        "Display this help message",
-        "Clear screen",
-        "Just a dummy program"
-        }
+        {
+            name: "test",
+            help_brief: "Just a dummy program",
+            function: &hello_world
+        },
+    }
 };
 </pre>
 Your terminal will now understand the command "test"
@@ -57,7 +60,7 @@ to display an initial user input prompt.
 <pre>
 void main()
 {
-    ushell_init(&supported_commands);
+    ushell_init(&apps);
     ushell_clear();
     ushell_help();
     ushell_prompt();
