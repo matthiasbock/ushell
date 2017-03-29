@@ -15,20 +15,26 @@
 // depends on newlib
 #include <string.h>
 
-// depends on ucurses: https://github.com/matthiasbock/ucurses
+// hardlink from ucurses: https://github.com/matthiasbock/ucurses
 #include <ansi.h>
 
 #include "helper.h"
 
 // character constants
 #define KEY_ESC         0x1B
-#define KEY_BACKSPACE   0x7F
-#ifdef NRF51
-    #define KEY_ENTER   0x0D
+#ifdef EMBEDDED
+    #define KEY_BACKSPACE   0x7F
+    #define KEY_ENTER       0x0D
 #else
-    #define KEY_ENTER   0x0A
+    #define KEY_BACKSPACE   STR(KEY_ESC) "?"
+    #define KEY_ENTER       0x0A
 #endif
 #define KEY_CTRL_C      0x03
+
+// Note: In the embedded world, you can't log out
+// of the shell, as it is running forever.
+#define KEY_CTRL_D  STR(KEY_ESC) "D"
+
 #define KEY_SPACEBAR    0x20
 #define KEY_TAB         0x09
 
