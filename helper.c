@@ -75,7 +75,7 @@ inline void byte2hex(uint8_t b, char buffer[], bool prefix)
     buffer[1] = nibble2hex(b & 0x0F);
 
     // append string terminator
-    buffer[3] = '\0';
+    buffer[2] = '\0';
 }
 
 inline void word2hex(uint32_t w, char buffer[], bool prefix)
