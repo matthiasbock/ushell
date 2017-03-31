@@ -23,6 +23,9 @@
 #define ANSI_CLEAR_LINE     ANSI_ESC "[K"
 #define ANSI_CLEAR_SCREEN   ANSI_ESC "[2J"
 
+#define ANSI_HIDE_CURSOR    ANSI_ESC "[?25l"
+#define ANSI_SHOW_CURSOR    ANSI_ESC "[?25h"
+
 #define ANSI_RESET          ANSI_ESC "[0m"
 
 #define ANSI_FG_RED         ANSI_ESC "[31m"

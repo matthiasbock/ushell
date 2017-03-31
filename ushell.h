@@ -23,10 +23,11 @@
 // character constants
 #define KEY_ESC         0x1B
 #ifdef EMBEDDED
+    //#define KEY_BACKSPACE   STR(KEY_ESC) "?"
     #define KEY_BACKSPACE   0x7F
     #define KEY_ENTER       0x0D
 #else
-    #define KEY_BACKSPACE   STR(KEY_ESC) "?"
+    #define KEY_BACKSPACE   0x7F
     #define KEY_ENTER       0x0A
 #endif
 #define KEY_CTRL_C      0x03
