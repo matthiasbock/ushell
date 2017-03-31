@@ -80,22 +80,36 @@ void ushell_help()
     for (uint8_t i=0; i<ushell_app_list->count; i++)
     {
         ushell_app_t* app = &ushell_app_list->apps[i];
-
-        // command and help text pointers should never be zero
-        if (app->name[i] == 0
-        ||  app->help_brief[i] == 0)
-        {
-            // skip
-            continue;
-        }
+        char* s;
+        uint8_t x;
 
         write("| ");
-        write(app->name);
-        for (uint8_t j=1+strlen(app->name); j<width_column1; j++)
+        if (app->name != 0)
+        {
+            s = app->name;
+            x = strlen(app->name);
+        }
+        else
+        {
+            s = "NULL";
+            x = 4;
+        }
+        write(s);
+        for (uint8_t j=1+x; j<width_column1; j++)
             writec(' ');
         write("| ");
-        write(app->help_brief);
-        for (uint8_t j=1+strlen(app->help_brief); j<width_column2; j++)
+        if (app->help_brief[i] != 0)
+        {
+            s = app->help_brief;
+            x = strlen(app->help_brief);
+        }
+        else
+        {
+            s = "NULL";
+            x = 4;
+        }
+        write(s);
+        for (uint8_t j=1+x; j<width_column2; j++)
             writec(' ');
         writec('|');
         crlf();
@@ -348,7 +362,7 @@ void ushell_input_char(uint8_t c)
     }
     else
     #ifndef USHELL_ACCEPT_NONPRINTABLE
-        if (is_printable(b))
+    if (is_printable(b))
     #endif
     {
         if (length < MAX_LENGTH-2)
