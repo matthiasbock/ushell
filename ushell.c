@@ -199,6 +199,67 @@ void command_line_evaluator()
     return;
 }
 
+
+/*
+ * The following code allows the user
+ * to browse through it's command history
+ */
+
+// static memory allocation
+char* history_entry[] =
+{
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+    "\0" "12345678901234567890123456789",
+};
+
+bool history_browser(uint32_t key)
+{
+
+    // 0: current command line, 1-9: previously invoked commands
+    static uint8_t current_history_position = 0;
+    uint8_t previous_history_position = current_history_position;
+
+    if (key == KEY_UP && current_history_position < 9)
+        current_history_position++;
+    if (key == KEY_DOWN && current_history_position > 0)
+        current_history_position--;
+
+    if (current_history_position != previous_history_position)
+    {
+        // save current command line to history position 0
+        strncpy(history_entry[previous_history_position], (char*) &command_line, length);
+
+        // clear line
+        terminal_output_string(ANSI_CURSOR_LEFT(MAX_LENGTH) ANSI_CLEAR_LINE);
+        ushell_prompt();
+        command_line[0] = 0;
+        length = 0;
+
+        // print selected history position
+        uint8_t l = strlen(history_entry[current_history_position]);
+        strncpy((char*) &command_line, history_entry[current_history_position], l);
+        length = l;
+        terminal_output_string(history_entry[current_history_position]);
+    }
+
+    // add current command line to command history
+    if (key == KEY_ENTER)
+    {
+        strncpy(history_entry[1], (char*) &command_line, length);
+    }
+
+    // whether key was handled or not
+    return key == KEY_UP || key == KEY_DOWN;
+}
+
 /**
  * @brief Tries to guess the rest of the user's incomplete input
  */
@@ -303,6 +364,10 @@ void ushell_input_char(uint8_t c)
         (*current_keystroke_handler)(b);
         return;
     }
+
+    // allow browsing through command history
+//    if (history_browser(b))
+//        return;
 
     if (b == KEY_BACKSPACE)
     {
