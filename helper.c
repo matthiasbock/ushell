@@ -18,13 +18,20 @@ inline char digit2char(uint8_t b)
     return '0' + b;
 }
 
-void int2str(uint32_t w, char buffer[])
+void int2str(int w, char* buffer)
 {
-    bool write = false;
+    if (w < 0)
+    {
+        *buffer = '-';
+        buffer++;
+        w = -w;
+    }
+
+    bool previous_digits_written = false;
     for (uint32_t divisor = 1000000000; divisor >= 1; divisor /= 10)
     {
         uint8_t digit = w / divisor;
-        if (digit > 0 || write)
+        if (digit > 0 || previous_digits_written || divisor == 1)
         {
             if (digit > 0)
             {
@@ -32,12 +39,34 @@ void int2str(uint32_t w, char buffer[])
             }
             *buffer = digit2char(digit);
             buffer++;
-            write = true;
+            previous_digits_written = true;
         }
     }
 
     // string terminator
     *buffer = 0;
+}
+
+void uint2str(uint32_t w, char* buffer)
+{
+    bool previous_digits_written = false;
+    for (uint32_t divisor = 1000000000; divisor >= 1; divisor /= 10)
+    {
+        uint8_t digit = w / divisor;
+        if (digit > 0 || previous_digits_written || divisor == 1)
+        {
+            if (digit > 0)
+            {
+                w -= digit*divisor;
+            }
+            *buffer = digit2char(digit);
+            buffer++;
+            previous_digits_written = true;
+        }
+    }
+
+    // string terminator
+    *buffer = '\0';
 }
 
 inline void word2binary(uint32_t value, char buffer[])

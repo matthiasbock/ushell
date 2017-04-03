@@ -25,9 +25,14 @@ bool is_printable(uint8_t b);
 char digit2char(uint8_t);
 
 /**
- * Fill buffer with string representation of integer
+ * Fill buffer with string representation of signed integer
  */
-void int2str(uint32_t w, char buffer[]);
+void int2str(int, char*);
+
+/**
+ * Fill buffer with string representation of unsigned integer
+ */
+void uint2str(uint32_t, char*);
 
 /**
  * @brief Generate a binary representation of a 32-bit integer
