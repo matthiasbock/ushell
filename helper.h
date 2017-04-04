@@ -30,6 +30,11 @@ char digit2char(uint8_t);
 void int2str(int, char*);
 
 /**
+ * Fill buffer with string representation of floating point integer
+ */
+void float2str(float*, char*);
+
+/**
  * Fill buffer with string representation of unsigned integer
  */
 void uint2str(uint32_t, char*);

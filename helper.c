@@ -66,7 +66,23 @@ void uint2str(uint32_t w, char* buffer)
     }
 
     // string terminator
-    *buffer = '\0';
+    *buffer = 0;
+}
+
+void float2str(float* f, char* buffer)
+{
+    uint32_t d = (uint32_t) *f;
+    uint32_t c1 = (uint32_t) ((*f)*10) - d*10;
+    uint32_t c2 = (uint32_t) ((*f)*100) - d*100 - c1*10;
+    int2str(d, buffer);
+    buffer = buffer + strlen(buffer);
+    *buffer = '.';
+    buffer++;
+    *buffer = digit2char(c1);
+    buffer++;
+    *buffer = digit2char(c2);
+    buffer++;
+    *buffer = 0;
 }
 
 inline void word2binary(uint32_t value, char buffer[])
