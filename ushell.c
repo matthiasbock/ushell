@@ -27,6 +27,15 @@ ushell_app_list_t* ushell_app_list = 0;
 keystroke_handler_t current_keystroke_handler = 0;
 
 
+// fallback routine, if no other method is implemented
+__attribute__((weak)) void terminal_output_string(char* s)
+{
+	for (uint8_t i=0; i<strlen(s); i++)
+	{
+		terminal_output_char(*(uint8_t*)(s+i));
+	}
+}
+
 inline void ushell_init(ushell_app_list_t* config)
 {
     ushell_app_list = config;

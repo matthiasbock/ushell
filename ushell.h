@@ -39,7 +39,7 @@
 #define KEY_SPACEBAR    0x20
 #define KEY_TAB         0x09
 
-#define KEY_ESCAPE(b,c)    (KEY_ESC << 24) | (b << 16) | (c << 8)
+#define KEY_ESCAPE(b,c)     ((KEY_ESC << 24) | (b << 16) | (c << 8))
 #define KEY_UP              KEY_ESCAPE('[','A')
 #define KEY_DOWN            KEY_ESCAPE('[','B')
 #define KEY_RIGHT           KEY_ESCAPE('[','C')
