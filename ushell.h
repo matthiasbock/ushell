@@ -36,10 +36,12 @@
 // of the shell, as it is running forever.
 #define KEY_CTRL_D  STR(KEY_ESC) "D"
 
-#define KEY_SPACEBAR    0x20
-#define KEY_TAB         0x09
+#define KEY_SPACEBAR        0x20
+#define KEY_TAB             0x09
 
-#define KEY_ESCAPE(b,c)     ((KEY_ESC << 24) | (b << 16) | (c << 8))
+#define KEY_ESCAPE(b,c)    ((KEY_ESC << 24) | (b << 16) | (c << 8))
+#define KEY_ESCAPE4(b,c,d) ((KEY_ESC << 24) | (b << 16) | (c << 8) | d)
+
 #define KEY_UP              KEY_ESCAPE('[','A')
 #define KEY_DOWN            KEY_ESCAPE('[','B')
 #define KEY_RIGHT           KEY_ESCAPE('[','C')
@@ -47,8 +49,13 @@
 #define KEY_PAGEUP          KEY_ESCAPE('[','5')
 #define KEY_PAGEDOWN        KEY_ESCAPE('[','6')
 #define KEY_SHIFT_TAB       KEY_ESCAPE('[','Z')
-#define KEY_POS1            KEY_ESCAPE('[','H')
-#define KEY_END             KEY_ESCAPE('[','F')
+#ifdef EMBEDDED
+    #define KEY_POS1        KEY_ESCAPE4('[','1','~')
+    #define KEY_END         KEY_ESCAPE4('[','4','~')
+#else
+    #define KEY_POS1        KEY_ESCAPE('[','H')
+    #define KEY_END         KEY_ESCAPE('[','F')
+#endif
 #define KEY_DEL             KEY_ESCAPE('3','~')
 
 // output macros
