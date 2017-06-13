@@ -478,7 +478,10 @@ void ushell_attach_keystroke_handler(keystroke_handler_t h)
 
 void ushell_release_keystroke_handler()
 {
-    current_keystroke_handler = 0;
-    clear_command_line();
-    ushell_prompt();
+    if (current_keystroke_handler != 0)
+    {
+        current_keystroke_handler = 0;
+        clear_command_line();
+        ushell_prompt();
+    }
 }
