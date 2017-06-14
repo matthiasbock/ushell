@@ -85,6 +85,23 @@ void float2str(float* f, char* buffer)
     *buffer = 0;
 }
 
+inline void byte2binary(uint32_t value, char buffer[])
+{
+    // 32 bits
+    for (int i=7; i>=0; i--)
+    {
+        // extract LSB
+        uint8_t bit = value & 0x00000001;
+        // convert to ASCII '0' or '1'
+        buffer[i] = 0x30 + bit;
+        // shift right to get next higher bit
+        value >>= 1;
+    }
+    // append string terminator
+    buffer[8] = '\0';
+}
+
+
 inline void word2binary(uint32_t value, char buffer[])
 {
     // 32 bits

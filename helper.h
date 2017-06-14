@@ -40,6 +40,14 @@ void float2str(float*, char*);
 void uint2str(uint32_t, char*);
 
 /**
+ * @brief Generate a binary representation of an 8-bit integer
+ *
+ * @param value: Value to represent
+ * @param buffer: Pointer to at least 9 bytes of buffer (8 bits + string terminator)
+ */
+void byte2binary(uint32_t value, char buffer[]);
+
+/**
  * @brief Generate a binary representation of a 32-bit integer
  *
  * @param value: Value to represent
