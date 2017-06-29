@@ -1,22 +1,30 @@
 # uShell
 
-uShell (microshell) is a very small and simple textual terminal emulator,
-intended for microcontrollers, where memory is limited.
+uShell (microshell) is a very small and simple shell library.
+It is primarily intended to be used in microcontroller projects.
 
-uShell provides an interface-independent textual terminal (e.g. via UART)
-and parses user inputs to invoke configurable functions via function pointers.
-It invokes those functions with the argument values,
-the user entered via the console.
+uShell provides your project with an interface-independent textual console,
+e.g. via the UART interface.
+It's parses a user's input into command and arguments
+and uses those to execute command-associated functions.
+It thus tries to implement the core functionality of a bash or similar PC shell
+and aims to provide a similar yet simplified user experience.
 
 ## Configuration
-In your code you must define a list of "apps",
-i.e. programs to be recognized by the shell.
-The keywords
+
+In order to use uShell,
+you must first define a list of programs/apps in your project,
+i.e. a list of programs that shall be accessible through the shell.
+The commands
 "help"
 and
 "clear"
-are ignored, as they implement fixed functions.
-<pre>
+can't be used, as they implement fixed functions.
+You may configure a help text for those commands though.
+
+The following code example defines a list of 3 apps,
+the last of which enables the user to invoke the hello_world() function:
+```C
 #include &lt;ushell.h&gt;
 
 // dummy program
@@ -46,54 +54,85 @@ const ushell_app_list_t apps =
         },
     }
 };
-</pre>
-Your terminal will now understand the command "test"
-and react by invoking the above function.
+```
 
 ## Initialization
-In your main code you must initialize the shell.
-It might also make sense,
-to clear the screen,
-show the list of supported commands with their corresponding help text
+
+You must initialize the uShell in your main() function.
+You might want to start by clearing the screen,
+show the list of commands supported by your shell
+alongside their corresponding help text
 and
-to display an initial user input prompt.
-<pre>
+present the user an initial input prompt:
+```C
 void main()
 {
     ushell_init(&apps);
     ushell_clear();
     ushell_help();
     ushell_prompt();
+
+    ...
 }
-</pre>
+```
 
 ## Interface
-uShell does not implement an interface.
-It expects you to define the functions
- * void terminal_output_char(uint8_t);
- * void terminal_output_string(char*);
 
-aswell as to invoke
- * ushell_input_char(uint8_t); e.g. in your UART reception interrupt handler
-
+uShell does not implement a physical interface.
+Instead it expects you to implement the following functions for the shell's outputs:
+```C
+void terminal_output_char(uint8_t);
+```
+and optionally:
+```C
+void terminal_output_string(char*);
+```
+aswell as to invoke, e.g. in your UART reception (interrupt) handler:
+```C
+ushell_input_char(uint8_t);
+```
 or
- * ushell_input_string(char*);
-
-to feed the shell with input.
-(Strings are assumed to be null-terminated.)
+```C
+ushell_input_string(char*);
+```
+to feed the shell with input (strings are assumed to be null-terminated).
 
 ## Advanced shell programs
-Usually the shell returns to the input prompt
-after the invocation of a function.
-If you wish to implement (the impression of)
-a constantly running application,
-you can use
-* ushell_attach_keystroke_handler(keystroke_handler_t*);
 
-within the invoked function to
-attach a user input handler
-of your own.
-All following terminal inputs will
-be forwarded to this function then.
-Once when your application completed, run:
-* ushell_release_keystroke_handler();
+Usually the shell returns to the input prompt
+when a function completes execution.
+With uShell you can also implement
+(the impression of)
+a constantly running application
+in a non-blocking way
+by redirecting shell inputs to your own handler.
+
+In order to do so, use:
+```C
+ushell_attach_keystroke_handler(keystroke_handler_t*);
+```
+within your program/app.
+This will redirect all following user inputs to the provided handler function.
+Once when your application has "completed" and you wish to return to the shell, simply run:
+```C
+ushell_release_keystroke_handler();
+```
+
+# Licensing
+
+This project is free and open source licensed under the GNU GPL v3.
+
+In layman's terms:
+You may use this software in your private and commercial projects,
+if you comply with the terms and conditions of the above license.
+This most notably means,
+that if you use this software in your project,
+you must publish your project's source code
+(e.g. here on GitHub).
+
+If you don't wish to do that,
+you must contact the author and buy a proprietary license.
+Such a license typically costs EUR 200 per seat and year.
+Usage of this software without a license is illegal and will be persecuted.
+
+For the complete and legally binding license text please refer to the <a href="https://github.com/matthiasbock/ushell/blob/master/LICENSE">LICENSE</a> file.
