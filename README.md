@@ -25,7 +25,7 @@ You may configure a help text for those commands though.
 The following code example defines a list of 3 apps,
 the last of which enables the user to invoke the hello_world() function:
 ```C
-#include &lt;ushell.h&gt;
+#include <ushell.h>
 
 // dummy program
 void hello_world(uint8_t argc, char* argv[])
