@@ -20,11 +20,6 @@ void syslog(loglevel_t loglevel, char* filename, uint32_t line, char* message)
         // goto beginning of line, clear line
         write(ANSI_CURSOR_LEFT(80) ANSI_CLEAR_LINE);
     }
-    else
-    {
-        // newline
-        crlf();
-    }
 
     // only print filename, if provided
     if (filename != 0)

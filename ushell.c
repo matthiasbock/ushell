@@ -197,8 +197,14 @@ void command_line_evaluator()
          && app->function != 0
          && strcmp(cv[0], app->name) == 0)
         {
-            // command found => execute function
+            // command found
+            // set dummy keystroke handler to prevent syslog problems
+            current_keystroke_handler = 1;
+            // execute developer-configured function
             (*(app->function))(cc, cv);
+            // clear dummy keystroke handler
+            if (current_keystroke_handler == 1)
+                current_keystroke_handler = 0;
             return;
         }
     }
