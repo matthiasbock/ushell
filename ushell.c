@@ -448,17 +448,14 @@ void ushell_input_char(uint8_t c)
     }
     else if (b == KEY_UP)
     {
-    	//crlf();
-        // clear command line for new input
         clear_command_line();
-        // return to input prompt
-        //ushell_prompt();
-        // Setup the matched command
+        // Copy last command to command_line
         strncpy(command_line, last_command_line+'\0', strlen(last_command_line)+1);
         length = strlen(last_command_line);
-        // Write the Command for the Prompt
+        // clear command line and Write the Command to the Prompt
+        crlf();
+        ushell_prompt();
         write(command_line);
-
     }
     else
     #ifndef USHELL_ACCEPT_NONPRINTABLE
