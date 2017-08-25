@@ -12,6 +12,7 @@
 uint8_t length = 0;
 // command line string
 char command_line[MAX_LENGTH];
+char last_command_line[MAX_LENGTH];
 
 // whether to echo received characters back to terminal
 bool ushell_echo = true;
@@ -211,6 +212,7 @@ void command_line_evaluator()
 
     // command not recognized
     error("Command not recognized");
+    writeln(command_line);
     return;
 }
 
@@ -283,6 +285,8 @@ inline void autocomplete()
     // whether the user input matched any known commands
     bool matches = false;
 
+    char *string = "";
+
     // check user input against all known commands
     for (uint8_t i=0; i<ushell_app_list->count; i++)
     {
@@ -301,19 +305,24 @@ inline void autocomplete()
             // no matches yet
             if (!matches)
             {
-                crlf();
+                //crlf();
                 matches = true;
             }
 
-            // did you mean this command?
-            writeln(app->name);
+            string = app->name;
+            break;
         }
     }
 
     if (matches)
     {
+    	crlf();
         // redraw command line
         ushell_prompt();
+        // Setup the matched command
+        strncpy(command_line, string+'\0', strlen(string)+1);
+        length = strlen(string);
+        // Write the Command for the Prompt
         write(command_line);
     }
 }
@@ -411,6 +420,9 @@ void ushell_input_char(uint8_t c)
         crlf();
         #endif
 
+        // Just copy the last command for the KEY_UP feature
+        strncpy(last_command_line, command_line+'\0', strlen(command_line)+1);
+
         // evaluate user input
         command_line_evaluator();
 
@@ -439,6 +451,17 @@ void ushell_input_char(uint8_t c)
     {
         // try to autocomplete the user's input
         autocomplete();
+    }
+    else if (b == KEY_UP)
+    {
+        clear_command_line();
+        // Copy last command to command_line
+        strncpy(command_line, last_command_line+'\0', strlen(last_command_line)+1);
+        length = strlen(last_command_line);
+        // clear command line and Write the Command to the Prompt
+        crlf();
+        ushell_prompt();
+        write(command_line);
     }
     else
     #ifndef USHELL_ACCEPT_NONPRINTABLE
