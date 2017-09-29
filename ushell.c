@@ -40,7 +40,8 @@ __attribute__((weak)) void terminal_output_string(char* s)
 inline void ushell_init(ushell_app_list_t* config)
 {
     ushell_app_list = config;
-//    ushell_app_list->count = sizeof(config->apps)/sizeof(ushell_app_t);
+    // Determine app count automatically
+//    ushell_app_list->count = sizeof(config->apps)/sizeof(config->apps[0]);
     clear_command_line();
 }
 
@@ -73,8 +74,8 @@ void ushell_help()
     if (ushell_app_list == 0)
         return;
 
-    const uint8_t width_column1 = 20;
-    const uint8_t width_column2 = 45;
+    const uint8_t width_column1 = 30;
+    const uint8_t width_column2 = 55;
 
     // upper table border
     writec('+');
@@ -200,11 +201,11 @@ void command_line_evaluator()
         {
             // command found
             // set dummy keystroke handler to prevent syslog problems
-            current_keystroke_handler = 1;
+            current_keystroke_handler = (keystroke_handler_t) 1;
             // execute developer-configured function
             (*(app->function))(cc, cv);
             // clear dummy keystroke handler
-            if (current_keystroke_handler == 1)
+            if (current_keystroke_handler == (keystroke_handler_t) 1)
                 current_keystroke_handler = 0;
             return;
         }

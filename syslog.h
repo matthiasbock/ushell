@@ -48,8 +48,19 @@ typedef enum
 
 
 /**
- * @brief Print out a log message
+ * Log a message with loglevel and code line
  */
 void syslog(loglevel_t loglevel, char* filename, uint32_t line, char* message);
+
+/**
+ * Log a message with loglevel and code line
+ *
+ * Macros, which automatically include file name and line number of invocation
+ */
+#define __syslog(loglevel, message)     syslog(loglevel, __FILE__, __LINE__, message)
+#define debug(message)                  __syslog(LOGLEVEL_DEBUG, message)
+#define warning(message)                __syslog(LOGLEVEL_WARNING, message)
+#define error(message)                  __syslog(LOGLEVEL_ERROR, message)
+#define success(message)                __syslog(LOGLEVEL_SUCCESS, message)
 
 #endif

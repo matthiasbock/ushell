@@ -63,8 +63,8 @@
 #define write(s)    terminal_output_string(s);
 #define crlf()      write("\n\r");
 #define writeln(s)  write(s); crlf();
-#define warning(s)  write(ANSI_RESET ANSI_FG_YELLOW "Warning: " ANSI_RESET) writeln(s);
-#define error(s)    write(ANSI_RESET ANSI_FG_RED "Error: " ANSI_RESET); writeln(s);
+//#define warning(s)  write(ANSI_RESET ANSI_FG_YELLOW "Warning: " ANSI_RESET) writeln(s);
+//#define error(s)    write(ANSI_RESET ANSI_FG_RED "Error: " ANSI_RESET); writeln(s);
 
 // if enabled, non-printable characters are accepted as input
 //#define USHELL_ACCEPT_NONPRINTABLE
