@@ -7,6 +7,7 @@
  */
 
 #include "ushell.h"
+#include "syslog.h"
 
 // length of current command line
 uint8_t length = 0;
