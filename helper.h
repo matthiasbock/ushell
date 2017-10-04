@@ -15,6 +15,11 @@
 #include "ushell.h"
 
 /**
+ * @brief Convert a single character to lower case
+ */
+char char2lower(char);
+
+/**
  * @brief Find out, if this key is printable or not
  */
 bool is_printable(uint8_t b);

@@ -7,6 +7,11 @@
 
 #include "helper.h"
 
+inline char char2lower(char c)
+{
+    return c >='A' && c <= 'Z' ? c|0x60 : c;
+}
+
 inline bool is_printable(uint8_t b)
 {
     // see https://de.wikipedia.org/wiki/American_Standard_Code_for_Information_Interchange
