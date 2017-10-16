@@ -59,6 +59,8 @@ void syslog(loglevel_t loglevel, char* filename, uint32_t line, char* message);
  */
 #define __syslog(loglevel, message)     syslog(loglevel, __FILE__, __LINE__, message)
 #define debug(message)                  __syslog(LOGLEVEL_DEBUG, message)
+#define info(message)                   __syslog(LOGLEVEL_INFO, message)
+#define note(message)                   __syslog(LOGLEVEL_NOTE, message)
 #define warning(message)                __syslog(LOGLEVEL_WARNING, message)
 #define error(message)                  __syslog(LOGLEVEL_ERROR, message)
 #define success(message)                __syslog(LOGLEVEL_SUCCESS, message)
