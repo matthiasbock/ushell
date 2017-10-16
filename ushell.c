@@ -71,6 +71,16 @@ inline void ushell_prompt()
         );
 }
 
+inline void ushell_prompt_suspend()
+{
+    current_keystroke_handler = USHELL_KEYSTROKE_HANDLER_DUMMY;
+}
+
+inline void ushell_prompt_resume()
+{
+    current_keystroke_handler = (keystroke_handler_t) 0;
+}
+
 void ushell_help()
 {
     // command list undefined
@@ -204,11 +214,11 @@ void command_line_evaluator()
         {
             // command found
             // set dummy keystroke handler to prevent syslog problems
-            current_keystroke_handler = (keystroke_handler_t) 1;
+            current_keystroke_handler = USHELL_KEYSTROKE_HANDLER_DUMMY;
             // execute developer-configured function
             (*(app->function))(cc, cv);
             // clear dummy keystroke handler
-            if (current_keystroke_handler == (keystroke_handler_t) 1)
+            if (current_keystroke_handler == USHELL_KEYSTROKE_HANDLER_DUMMY)
                 current_keystroke_handler = 0;
             return;
         }
@@ -384,6 +394,10 @@ void ushell_input_char(uint8_t c)
 {
     static uint32_t b;
     if (catch_special_char_state_machine(c, &b))
+        return;
+
+    // the user input prompt is suspended
+    if (current_keystroke_handler == USHELL_KEYSTROKE_HANDLER_DUMMY)
         return;
 
     // a running application requested input forwarding

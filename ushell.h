@@ -152,6 +152,25 @@ void ushell_help();
  */
 void ushell_prompt();
 
+/**
+ * Some invalid pointer address to assign to the
+ * keystroke handler, so that it is recognized,
+ * that the prompt is supposed to be "suspended".
+ */
+#define USHELL_KEYSTROKE_HANDLER_DUMMY      (keystroke_handler_t) 1
+
+/**
+ * Temporarily disable printing a user input prompt
+ * and accepting user input
+ */
+void ushell_prompt_suspend();
+
+/**
+ * Re-enable the user input prompt
+ * and continue accepting user input
+ */
+void ushell_prompt_resume();
+
 
 // referenced here, since it appears to be necessary for the function to be usable in ushell.c
 void autocomplete();
