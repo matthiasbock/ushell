@@ -63,7 +63,8 @@
 // output macros
 #define writec(c)   terminal_output_char(c);
 #define write(s)    terminal_output_string(s);
-#define crlf()      write("\n\r");
+#define LINEBREAK   "\r\n"
+#define crlf()      write(LINEBREAK);
 #define writeln(s)  write(s); crlf();
 //#define warning(s)  write(ANSI_RESET ANSI_FG_YELLOW "Warning: " ANSI_RESET) writeln(s);
 //#define error(s)    write(ANSI_RESET ANSI_FG_RED "Error: " ANSI_RESET); writeln(s);
