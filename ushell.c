@@ -9,6 +9,7 @@
 #include "ushell.h"
 #include "syslog.h"
 
+
 // length of current command line
 uint8_t length = 0;
 // command line string
@@ -43,6 +44,7 @@ inline void ushell_init(ushell_app_list_t* config)
     ushell_app_list = config;
     // Determine app count automatically
 //    ushell_app_list->count = sizeof(config->apps)/sizeof(config->apps[0]);
+    setvbuf(stdout, NULL, _IONBF, 0);
     clear_command_line();
 }
 

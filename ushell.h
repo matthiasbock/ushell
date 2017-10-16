@@ -12,6 +12,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <stdio.h>  // setvbuf() and: Inclusion of ushell.h shall implicitly include printf etc.
+
 // depends on newlib
 #include <string.h>
 
