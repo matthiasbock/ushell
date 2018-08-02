@@ -182,7 +182,7 @@ void command_line_evaluator()
             // cannot have more than MAX_SUBSTRINGS
             if (cc >= MAX_SUBSTRINGS)
             {
-                warning("More than " STR(MAX_SUBSTRINGS) " arguments will be ignored.");
+                log_warning("More than " STR(MAX_SUBSTRINGS) " arguments will be ignored.");
                 break;
             }
         }
@@ -225,7 +225,7 @@ void command_line_evaluator()
     }
 
     // command not recognized
-    error("Command not recognized");
+    log_error("Command not recognized");
     writeln(command_line);
     return;
 }
@@ -500,7 +500,7 @@ void ushell_input_char(uint8_t c)
         {
             // terminate command line input
             crlf();
-            warning("Aborted. Maximum command line length exceed.");
+            log_warning("Aborted. Maximum command line length exceed.");
             clear_command_line();
 
             // return to input prompt

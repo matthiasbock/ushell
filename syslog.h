@@ -57,12 +57,12 @@ void syslog(loglevel_t loglevel, char* filename, uint32_t line, char* message);
  *
  * Macros, which automatically include file name and line number of invocation
  */
-#define __syslog(loglevel, message)     syslog(loglevel, __FILE__, __LINE__, message)
-#define debug(message)                  __syslog(LOGLEVEL_DEBUG, message)
-#define info(message)                   __syslog(LOGLEVEL_INFO, message)
-#define note(message)                   __syslog(LOGLEVEL_NOTE, message)
-#define warning(message)                __syslog(LOGLEVEL_WARNING, message)
-#define error(message)                  __syslog(LOGLEVEL_ERROR, message)
-#define success(message)                __syslog(LOGLEVEL_SUCCESS, message)
+#define log(loglevel, message)          syslog(loglevel, __FILE__, __LINE__, message)
+#define log_debug(message)              log(LOGLEVEL_DEBUG, message)
+#define log_info(message)               log(LOGLEVEL_INFO, message)
+#define log_note(message)               log(LOGLEVEL_NOTE, message)
+#define log_warning(message)            log(LOGLEVEL_WARNING, message)
+#define log_error(message)              log(LOGLEVEL_ERROR, message)
+#define log_success(message)            log(LOGLEVEL_SUCCESS, message)
 
 #endif
